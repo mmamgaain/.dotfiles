@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# Stupidly install all the necessary packages
+[ -f $HOME/.dotfiles/installed_pkgs ] && (cat $HOME/.dotfiles/installed_pkgs | xargs -n 1 sudo apt install -y) || echo "ERROR: \"installed_packages\" file not present at it's location."
+sudo update-alternatives --install /usr/bin/clangd clangd /usr/bin/clangd-8 100
+
+# Stupidly make sure that some important symbolic links have been put in place
+[ -f $HOME/.bash_aliases ] || (ln -sT $HOME/.dotfiles/bash_aliases.sh $HOME/.bash_aliases && source $HOME/.bashrc)
+[ -f $HOME/.vimrc ] || ln -sT $HOME/.dotfiles/vimrc $HOME/.vimrc
+#[ -f /usr/bin/isroot ] || ln -sT $HOME/Housekeeping_Scripts/is_root.sh /usr/bin/isroot
+mkifnedir /media/mayank/F_Drive
+[ -f /usr/bin/prime ] || sudo gcc $HOME/Housekeeping_Scripts/prime.c -o /usr/bin/prime -lm
+
+# Make python3 default python
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
+
+add-apt-repository ppa:micahflee/ppa
+
+# Create some python virtual environments
+[ -d $HOME/.SafeENV/ ] || virtualenv $HOME/.SafeENV/
+[ -d /var/www/html/IBDC_Search_ENV/ ] || sudo virtualenv /var/www/html/IBDC_Search_ENV/
+username=`id -un`; sudo chown -R $username:$username /var/www/html/IBDC_Search_ENV/; username=;
+
+# Stupidly make sure that 'plugged' and 'undodir' directories are present for vim plugins
+mkifnedir "$HOME/.vim/plugged" && echo Vim-Plug directory created for a fresh start || echo Problem encountered while initializing vim plugins directory
+mkifnedir "$HOME/.vim/undodir" && echo Undodir directory created for a fresh start || echo Problem encountered while initializing undodir plugins directory
+
+# YCM completer
+$HOME/.vim/plugged/YouCompleteMe/install.py --clangd-completer --ts-completer --java-completer
+[ -f $HOME/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py ] || echo -e "import os\n\ndef Settings(**kwargs):\n\treturn {\n\t\t'interpreter_path': os.environ['_']\n\t}" > $HOME/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py
+# Run in Vim Command Mode
+vim -c "CocInstall coc-clangd coc-json coc-tsserver coc-java coc-pyright coc-html coc-css coc-htmldjango" .
+$HOME/.vim/plugged/vimspector/install_gadget.py --enable-c --enable-cpp --enable-python --enable-bash --force-enable-java --force-enable-chrome --force-enable-firefox
+
