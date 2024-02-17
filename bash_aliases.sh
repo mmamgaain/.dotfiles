@@ -184,18 +184,6 @@ tty -s && {
 	fortune | cowsay -s
 }
 
-# Github token
-[ -z "$GITHUB_TOKEN" ] && declare +i -rx GITHUB_TOKEN='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'
-
-STABILITY_KEY=sk-0SQQsOBEDlnSmMa3JoxOOJLti5S0VNWQ7junJjOTuSHL9ftn
-export STABILITY_KEY
-
 alias CONNECT_VPN='sudo openvpn --config $HOME/.dotfiles/ibdc-mayank__ssl_vpn_config.ovpn --auth-user-pass $HOME/.dotfiles/openvpn_cred.txt'
 
-[ -z "$MAYANK_HPC_SIGNATURE" ] && declare +i -rx MAYANK_HPC_SIGNATURE='ibdc-mayank_m@10.74.0.51'
-alias MAYANK_HPC='ssh $MAYANK_HPC_SIGNATURE'
-
 PATH=$PATH:/usr/include/c++/11:/usr/include/x86_64-linux-gnu/c++/11
-
-[ -z "$OFFICE_PC_SIGNATURE" ] && declare +i -rx OFFICE_PC_SIGNATURE='mayank@172.30.0.81'
-alias OFFICE_PC='ssh $OFFICE_PC_SIGNATURE'
